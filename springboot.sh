@@ -2,8 +2,8 @@
 
 DATE=$(date +%F)
 WORKSPACE=$1
-APP_NAME=$2
-BUILD_NUMBER=$3
+BUILD_NUMBER=$2
+APP_NAME=$3
 DIR=/rwda/runtime/$APP_NAME
 JARFILE=$APP_NAME-0.0.1-SNAPSHOT.jar
 LOG_PATH=$DIR/logs
@@ -16,8 +16,6 @@ if [ ! -d $LOG_PATH ];then
  mkdir -p $LOG_PATH
 fi
 
-cd $DIR
-
 PID=$(ps -ef | grep $JARFILE | grep -v grep | awk '{ print $2 }')
 if [ -z "$PID" ]
 then
@@ -25,8 +23,9 @@ then
 else
     echo -----------kill $PID-------------
     kill -9 $PID
-    echo ------------Application is starting--------------
 fi
+
+cd $DIR
 
 if [ -f $JARFILE ];then
     mv $JARFILE backup/$JARFILE-$DATE-$BUILD_NUMBER.jar
@@ -34,7 +33,9 @@ fi
 
 cp -f $WORKSPACE/$APP_NAME/target/$JARFILE .
 
-BUILD_ID=dontKillMe nohup java -jar $JARFILE 1>>$LOG_PATH/stdout.log 2>>$LOG_PATH/error.log &
+echo ------------Application is starting--------------
+
+BUILD_ID=dontKillMe nohup java -jar $JARFILE --spring.profiles.active=$4 1>>$LOG_PATH/stdout.log 2>>$LOG_PATH/error.log &
 
 if [ $? = 0 ];then
     sleep 2
