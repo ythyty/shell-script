@@ -29,27 +29,29 @@ if [ ! -d ${LOG_DIR} ];then
  mkdir -p ${LOG_DIR}
 fi
 
-cd ${BIN_DIR}
-
-export JARFILE=`find ${BIN_DIR} -name "*.jar"`
-JARNAME=${JARFILE##*/}
+JARFILE=`find ${BIN_DIR}/ -name "*.jar"`
 
 if [ -f ${JARFILE} ];then
+    JARNAME=${JARFILE##*/}
     cp -f ${JARFILE} ${BACKUP_DIR}/${JARNAME%.*}-${DATE}-${BUILD_NUMBER}.jar
 fi
 
-rsync -var --delete ${WORKSPACE}/${PROJECT}/target/${JARNAME} ${BIN_DIR}/${JARNAME}
+rsync -var --delete ${WORKSPACE}/${PROJECT}/target/ ${BIN_DIR}/
 
-rm -rf $LOG_PATH/stdout.log
+export JARFILE=`find ${BIN_DIR}/ -name "*.jar"`
 
-sh spring-boot restart
+rm -rf ${LOG_DIR}/stdout.log
 
+cd /rwda/jenkins_ci_sh/
+sh spring-boot.sh restart
+
+sleep 5
 echo "获取日志"
-cat ../logs/stdout.log 
+cat ${LOG_DIR}/stdout.log
+
 echo "查看端口号"
-netstat -ntlp |grep `ps aux |grep $item |awk '{print $2}'`
+ps -ef | grep java | grep ${PROJECT} | grep -v grep | awk '{print $2}'
 echo "重启完成"
 
-cd ../backup/
+cd ${BACKUP_DIR}
 ls -lt|awk 'NR>5{print $NF}'|xargs rm -rf
-
