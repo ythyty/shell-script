@@ -49,9 +49,14 @@ sleep 5
 echo "获取日志"
 cat ${LOG_DIR}/stdout.log
 
-echo "查看端口号"
+echo "查看端口号："
 ps -ef | grep java | grep ${PROJECT} | grep -v grep | awk '{print $2}'
-echo "重启完成"
+PID=`ps -ef | grep java | grep ${PROJECT} | grep -v grep | awk '{print $2}'`
+if [ -z "${PID}" ];then
+	echo "${PROJECT} 启动失败"
+else
+	echo "${PROJECT} 启动完成"
+fi
 
 cd ${BACKUP_DIR}
 ls -lt|awk 'NR>5{print $NF}'|xargs rm -rf
