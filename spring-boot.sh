@@ -1,6 +1,6 @@
 #!/bin/bash
 
-START () {
+START () { 
     PIDS=`ps -ef | grep java | grep ${PROJECT} | grep -v grep | awk '{print $2}'`
     if [ -n "${PIDS}" ];then
         echo "${PROJECT} is running!"
