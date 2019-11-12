@@ -32,7 +32,7 @@ fi
 JARFILE=`find ${BIN_DIR}/ -name "*.jar"`
 
 if [ -f ${JARFILE} ];then
-	echo "备份运行目录中的JARFILE：${JARFILE}"
+    echo "备份运行目录中的JARFILE：${JARFILE}"
     JARNAME=${JARFILE##*/}
     cp -f ${JARFILE} ${BACKUP_DIR}/${JARNAME%.*}-${DATE}-${BUILD_NUMBER}.jar
 fi
